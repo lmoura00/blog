@@ -1,0 +1,50 @@
+npm init -y
+npm i express jsonwebtoken bcryptjs
+npm i typescript ts-node @types/node prisma --save-dev
+npx tsc --init
+npx prisma init
+npm i --save-dev @types/express
+npm i --save-dev @types/jsonwebtoken
+npm i --save-dev @types/bcrypjs
+docker rm postgres
+docker create postgres
+docker run --name postgres -p 5432:5432 -e POSTGRES_PASSWORD=secret -d postgres 
+docker exec -it postgres psql -U postgres
+
+create database blog;
+\q
+
+NO .env:
+    DATABASE_URL="postgresql://[usuário]:[senha postgres]@localhost:5432/[database]?schema=public"
+    DATABASE_URL="postgresql://postgres:secret@localhost:5432/blog?schema=public"
+
+NO ./prisma/schema.models:
+    model User{
+        id String @id @default(uuid())
+        name String
+        email String @unique
+        password String
+        post Post[]
+    }
+    model Post{
+        id String @id @default(uuid())
+        title String
+        authorId String
+        author User @relation(fields: [authorId], references: [id])
+    }
+
+npx prisma migrate dev --name init
+
+docker exec -it postgres psql -U postgres
+    \c blog
+    \dt
+    \q 
+
+
+PARA RODAR O CÓDIGO:
+    npx tsx watch ./src/main.ts
+    OU
+      "scripts": {
+            "dev": "npx tsx watch ./Src/main.ts"
+        },
+    E npm run dev
