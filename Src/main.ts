@@ -1,9 +1,8 @@
 import express from 'express'
-import jwt from 'jsonwebtoken'
-import brypt from 'bcryptjs'
+import { routes } from './Routes/Routes'
 
 
 const app = express()
 app.use(express.json())
-
+app.use(routes)
 app.listen(3333, ()=> console.log("Server running..."))
